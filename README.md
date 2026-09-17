@@ -1,4 +1,3 @@
-
 # Darukaa.Earth
 
 A full-stack geospatial analytics platform for managing and visualizing carbon and biodiversity projects.
@@ -9,7 +8,7 @@ Built as a submission for the **Darukaa.Earth Full-Stack Developer Hackathon**.
 
 ## Live Demo
 
-**URL:** https://darukaa-earth-wheat.vercel.app
+**URL:** https://darukaa-earth-seven.vercel.app
 
 **Demo credentials:**
 
@@ -156,7 +155,7 @@ Built as a submission for the **Darukaa.Earth Full-Stack Developer Hackathon**.
 ### Step 1 — Clone and Open
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/darukaa-earth.git
+git clone https://github.com/Adi222004/darukaa-earth.git
 cd darukaa-earth
 ```
 
@@ -422,48 +421,3 @@ The seed script (`backend/scripts/seed.py`) inserts demo data using **real coord
 ## 8. License
 
 Unpublished. Built as a hackathon submission for Darukaa.Earth.
-```
-
----
-
-## Now fix the pre-commit size limit (needed to commit)
-
-The reason your previous commit failed was `check-added-large-files` rejecting your screenshots (2.2 MB + 2.7 MB > 1 MB limit). **Raise the limit to 5 MB** so they pass.
-
-**In VS Code**, open `.pre-commit-config.yaml`. Find:
-
-```yaml
-      - id: check-added-large-files
-        args: ['--maxkb=1000']
-```
-
-Change to:
-
-```yaml
-      - id: check-added-large-files
-        args: ['--maxkb=5000']
-```
-
-**Save.**
-
----
-
-## Then commit + push (4 commands in PowerShell)
-
-```powershell
-cd D:\personal_ANU\PJ\darukaa_earth
-pre-commit run --all-files
-pre-commit run --all-files
-git add .
-git commit -m "docs: add live demo URL and screenshots"
-git push
-```
-
-**Expected final output:**
-```
-[main xxxxxxx] docs: add live demo URL and screenshots
- N files changed, ...
-```
-```
-   xxxxxxx..xxxxxxx  main -> main
-```
