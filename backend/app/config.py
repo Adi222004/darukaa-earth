@@ -12,3 +12,6 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+# hook test
+
+# hook test
