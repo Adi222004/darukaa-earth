@@ -4,10 +4,16 @@ from sqlalchemy import engine_from_config, pool
 
 import app.models  # noqa: F401 — registers all models with Base.metadata
 from alembic import context
+from app.config import settings
 from app.database import Base
 
 # Alembic Config object, provides access to values within alembic.ini
 config = context.config
+
+# Override the DB URL with the one from .env (via Pydantic Settings).
+# This way we don't need to touch alembic.ini when switching between
+# local PostGIS (docker-compose) and Neon (production).
+config.set_main_option("sqlalchemy.url", settings.database_url)
 
 # Configure Python logging from alembic.ini
 if config.config_file_name is not None:
@@ -22,7 +28,7 @@ def include_object(object, name, type_, reflected, compare_to):
 
     When Alembic reflects a table that exists in the DB but has no counterpart
     in our SQLAlchemy models (e.g. spatial_ref_sys, tiger geocoder tables),
-    we return False so it is ignored rather than generating a DROP statement.
+    return False so it is ignored rather than generating a DROP statement.
     """
     if type_ == "table" and reflected and compare_to is None:
         return False
@@ -32,9 +38,7 @@ def include_object(object, name, type_, reflected, compare_to):
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 
-    This configures the context with just a URL and not an Engine, though an
-    Engine is acceptable here as well. By skipping the Engine creation we don't
-    even need a DBAPI to be available.
+    This configures the context with just a URL and not an Engine.
     """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
