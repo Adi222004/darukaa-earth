@@ -1,0 +1,51 @@
+# ============ Python ============
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# ============ Node ============
+node_modules/
+dist/
+build/
+.vite/
+.cache/
+*.tsbuildinfo
+
+# ============ Environment / Secrets ============
+.env
+.env.local
+.env.*.local
+*.env
+!.env.example
+
+# ============ IDE ============
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# ============ OS ============
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ============ Docker ============
+pgdata/
+
+# ============ Build artifacts ============
+*.pyc
+*.pyo
+
+.env
+.env.local
+.env.*.local
