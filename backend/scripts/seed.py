@@ -137,9 +137,7 @@ def seed():
             for site_name, coords in p_data["sites"]:
                 poly = Polygon(coords)
 
-                area_m2 = db.execute(
-                    func.ST_Area(func.ST_GeogFromText(poly.wkt))
-                ).scalar() or 0.0
+                area_m2 = db.execute(func.ST_Area(func.ST_GeogFromText(poly.wkt))).scalar() or 0.0
                 area_ha = float(area_m2) / 10_000.0
 
                 site = Site(

@@ -5,10 +5,16 @@ exclude = [".venv", "alembic/versions"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "S"]
-ignore = ["S101"]  # allow assert in tests
+ignore = [
+    "B008",  # FastAPI Depends() in arg defaults is the intended pattern
+    "S101",  # allow assert in tests
+    "S105",  # allow demo credentials in seed script
+    "S311",  # allow non-crypto random in seed script
+]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]
+"scripts/seed.py" = ["S105", "S311"]
 
 [tool.black]
 line-length = 100

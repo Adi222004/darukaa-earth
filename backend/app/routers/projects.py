@@ -13,7 +13,12 @@ router = APIRouter(prefix="/api/projects", tags=["projects"])
 
 @router.get("", response_model=list[ProjectOut])
 def list_projects(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    return db.query(Project).filter(Project.owner_id == user.id).order_by(Project.created_at.desc()).all()
+    return (
+        db.query(Project)
+        .filter(Project.owner_id == user.id)
+        .order_by(Project.created_at.desc())
+        .all()
+    )
 
 
 @router.post("", response_model=ProjectOut, status_code=status.HTTP_201_CREATED)
@@ -36,9 +41,7 @@ def get_project(
     user: User = Depends(get_current_user),
 ):
     project = (
-        db.query(Project)
-        .filter(Project.id == project_id, Project.owner_id == user.id)
-        .first()
+        db.query(Project).filter(Project.id == project_id, Project.owner_id == user.id).first()
     )
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -52,9 +55,7 @@ def delete_project(
     user: User = Depends(get_current_user),
 ):
     project = (
-        db.query(Project)
-        .filter(Project.id == project_id, Project.owner_id == user.id)
-        .first()
+        db.query(Project).filter(Project.id == project_id, Project.owner_id == user.id).first()
     )
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")

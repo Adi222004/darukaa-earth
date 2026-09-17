@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from typing import Any, List
+from typing import Any
 
 from pydantic import BaseModel, EmailStr, Field
 
@@ -66,4 +66,4 @@ class MetricOut(BaseModel):
 
 
 class SiteDetail(SiteOut):
-    metrics: List[MetricOut] = []
+    metrics: list[MetricOut] = []
