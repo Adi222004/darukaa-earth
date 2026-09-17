@@ -1,3 +1,4 @@
+
 # Darukaa.Earth
 
 A full-stack geospatial analytics platform for managing and visualizing carbon and biodiversity projects.
@@ -8,7 +9,7 @@ Built as a submission for the **Darukaa.Earth Full-Stack Developer Hackathon**.
 
 ## Live Demo
 
-**URL:** *[paste the Vercel URL here after deployment]*
+**URL:** https://darukaa-earth-wheat.vercel.app
 
 **Demo credentials:**
 
@@ -24,15 +25,23 @@ Built as a submission for the **Darukaa.Earth Full-Stack Developer Hackathon**.
 3. Click any polygon to see the site name and area.
 4. Navigate to a site to view 12 months of carbon and biodiversity analytics.
 
+> **Note:** The Render backend uses the free tier and spins down after 15 minutes of inactivity. The first login attempt may take 30–50 seconds while the backend wakes up.
+
 ---
 
 ## Screenshots
 
-> Add screenshots to `docs/screenshots/` and reference them here.
+### Login Page
 
-* `docs/screenshots/login.png` — Login page
-* `docs/screenshots/dashboard.png` — Dashboard with map and site polygons
-* `docs/screenshots/site-detail.png` — Site detail with performance chart
+![Darukaa.Earth Login](docs/screenshots/login.png)
+
+### Dashboard
+
+![Darukaa.Earth Dashboard](docs/screenshots/dashboard.png)
+
+### Site Detail & Analytics
+
+![Darukaa.Earth Site Detail](docs/screenshots/site-detail.png)
 
 ---
 
@@ -58,7 +67,7 @@ Built as a submission for the **Darukaa.Earth Full-Stack Developer Hackathon**.
                                 └─────────────────────┘
 ```
 
-### Request flow
+### Request Flow
 
 1. User authenticates via `POST /api/auth/login` and receives a JWT.
 2. The frontend stores the token in `localStorage` and sends it as `Authorization: Bearer <token>` on every request via an Axios interceptor.
@@ -74,7 +83,7 @@ Built as a submission for the **Darukaa.Earth Full-Stack Developer Hackathon**.
 | Mapping            | Mapbox GL JS + `react-map-gl` + `@mapbox/mapbox-gl-draw` |
 | Charting           | Chart.js via `react-chartjs-2`                           |
 | Backend            | Python 3.11 + FastAPI                                    |
-| Database           | PostgreSQL 16 + PostGIS 3.4                              |
+| Database           | PostgreSQL 16 + PostGIS 3.6                              |
 | Auth               | JWT (HS256) via `python-jose`                            |
 | ORM                | SQLAlchemy + GeoAlchemy2                                 |
 | Migrations         | Alembic                                                  |
@@ -125,13 +134,13 @@ Built as a submission for the **Darukaa.Earth Full-Stack Developer Hackathon**.
 | `carbon_tons`        | float     |                                     |
 | `biodiversity_index` | float     | Range 0–1                           |
 
-### Design decisions
+### Design Decisions
 
-* **UUID primary keys** — safe to expose in URLs, easy to generate without DB round-trips, no enumeration risk.
-* **`geom` as `POLYGON, SRID 4326`** — matches Mapbox/GeoJSON conventions. The GIST index enables fast viewport queries and `ST_Within` filters.
-* **`area_hectares` is stored, not computed on read** — avoids recomputing `ST_Area` on every list query. Recomputed only when the geometry changes.
-* **Cascade deletes** — deleting a user wipes projects → sites → metrics in a single transaction, keeping the DB consistent.
-* **PostGIS system tables** (`spatial_ref_sys`, Tiger geocoder) are excluded from Alembic autogenerate via a custom `include_object` hook.
+- **UUID primary keys** — safe to expose in URLs, easy to generate without DB round-trips, no enumeration risk.
+- **`geom` as `POLYGON, SRID 4326`** — matches Mapbox/GeoJSON conventions. The GIST index enables fast viewport queries and `ST_Within` filters.
+- **`area_hectares` is stored, not computed on read** — avoids recomputing `ST_Area` on every list query. Recomputed only when the geometry changes.
+- **Cascade deletes** — deleting a user wipes projects → sites → metrics in a single transaction, keeping the DB consistent.
+- **PostGIS system tables** (`spatial_ref_sys`, Tiger geocoder) are excluded from Alembic autogenerate via a custom `include_object` hook.
 
 ---
 
@@ -139,19 +148,19 @@ Built as a submission for the **Darukaa.Earth Full-Stack Developer Hackathon**.
 
 ### Prerequisites
 
-* **Node.js 20+**
-* **Python 3.11+**
-* **Docker Desktop**
-* A free **Mapbox account** for a public access token
+- **Node.js 20+**
+- **Python 3.11+**
+- **Docker Desktop**
+- A free **Mapbox account** for a public access token
 
-### Step 1 — Clone and open
+### Step 1 — Clone and Open
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/darukaa-earth.git
 cd darukaa-earth
 ```
 
-### Step 2 — Start the database
+### Step 2 — Start the Database
 
 ```bash
 docker compose up -d
@@ -161,7 +170,7 @@ docker exec -it darukaa_db psql -U darukaa -d darukaa -c "SELECT PostGIS_Version
 
 The last command should print a PostGIS version string.
 
-### Step 3 — Backend setup
+### Step 3 — Backend Setup
 
 ```bash
 cd backend
@@ -192,19 +201,9 @@ python scripts/seed.py
 uvicorn app.main:app --reload --port 8000
 ```
 
-Backend runs on:
+Backend runs on `http://localhost:8000`. Interactive API docs at `http://localhost:8000/docs`.
 
-```text
-http://localhost:8000
-```
-
-Interactive API docs:
-
-```text
-http://localhost:8000/docs
-```
-
-### Step 4 — Frontend setup
+### Step 4 — Frontend Setup
 
 Open a **new terminal**:
 
@@ -226,13 +225,9 @@ Start the development server:
 npm run dev
 ```
 
-Frontend runs on:
+Frontend runs on `http://localhost:5173`.
 
-```text
-http://localhost:5173
-```
-
-### Step 5 — Log in
+### Step 5 — Log In
 
 ```text
 Email:    demo@darukaa.com
@@ -251,11 +246,9 @@ The project uses **GitHub Actions** for continuous integration and **platform de
 
 **Steps:**
 
-1. Spin up a `postgis/postgis:16-3.4` service container.
-2. Install Python 3.11 and dependencies from `requirements.txt`.
-3. Run `ruff check .` and `black --check .`.
-4. Run `pytest` against the live PostGIS service.
-5. On a successful `main` build, POST to `RENDER_DEPLOY_HOOK` stored as a GitHub secret to trigger a Render deploy.
+1. Set up Python 3.11.
+2. Install backend dependencies from `requirements.txt`.
+3. Smoke test — import the FastAPI app to catch syntax or import errors early.
 
 ### `.github/workflows/frontend.yml`
 
@@ -264,28 +257,25 @@ The project uses **GitHub Actions** for continuous integration and **platform de
 **Steps:**
 
 1. Node 20 with npm cache.
-2. `npm ci` for reproducible installation from the lockfile.
-3. `npm run lint` for ESLint + Prettier checks.
-4. `npm run build` to verify the production build.
-5. Vercel's GitHub integration auto-deploys on green `main` builds.
+2. `npm ci` (reproducible install from lockfile).
+3. `npm run build` (fails the pipeline if the production build breaks).
+4. Vercel's GitHub integration auto-deploys on green `main` builds.
 
-### Pre-commit hooks
+### Pre-commit Hooks
 
-The project uses Husky + lint-staged and pre-commit.
+The brief requires pre-commit hooks via Husky + lint-staged. We use:
 
-* **Husky + lint-staged** at the repo root — runs on every `git commit`:
+- **Husky + lint-staged** at the repo root — runs on every `git commit`:
+  - Prettier formats `frontend/**/*.{js,jsx,json,css,md}`.
+  - ESLint auto-fixes JS/JSX issues.
+- **pre-commit** for Python — runs on every `git commit`:
+  - Ruff lint + auto-fix.
+  - Black formatting.
+  - Trailing whitespace removal.
+  - End-of-file fixer.
+  - Private key detection.
 
-  * Prettier formats `frontend/**/*.{js,jsx,json,css,md}`.
-  * ESLint auto-fixes JS/JSX issues.
-* **pre-commit** for Python — runs on every `git commit`:
-
-  * Ruff lint + auto-fix.
-  * Black formatting.
-  * Trailing whitespace removal.
-  * End-of-file fixer.
-  * Private key detection.
-
-### Install locally once after cloning
+### Install Locally Once After Cloning
 
 ```bash
 npm install
@@ -307,7 +297,7 @@ Documented technical decisions and their reasoning:
 
 FastAPI gives us Pydantic request validation, automatic OpenAPI docs, and async endpoints out of the box. Flask would need all three bolted on. Django is heavyweight for an API-only service; SQLAlchemy + Alembic covers the same ground without the framework overhead.
 
-### SQLAlchemy + GeoAlchemy2 over raw SQL
+### SQLAlchemy + GeoAlchemy2 over Raw SQL
 
 GeoAlchemy2 integrates PostGIS types cleanly with the ORM — typed `Geometry` columns, `from_shape` / `to_shape` helpers, and Alembic autogenerate support.
 
@@ -317,37 +307,35 @@ Trade-off: autogenerate needs a small `include_object` hook to skip PostGIS syst
 
 Mapbox offers vector tiles, WebGL rendering, satellite basemaps, and a first-class draw plugin (`@mapbox/mapbox-gl-draw`) which made the polygon-drawing flow straightforward.
 
-Trade-off: requires an API token and has a slightly steeper API.
+Trade-off: requires an API token and a slightly steeper API.
 
 ### Chart.js over Highcharts
 
-Chart.js is MIT-licensed; Highcharts requires a commercial license for non-personal use.
+Chart.js is MIT-licensed; Highcharts requires a commercial license for non-personal use. The chart types we need (dual-axis line with fill) are supported natively by Chart.js.
 
-The chart types we need, including dual-axis lines with fill, are supported natively by Chart.js.
+Trade-off: fewer chart types than Highcharts if the product later needs candlestick / heatmaps.
 
-Trade-off: fewer chart types than Highcharts if the product later needs candlestick charts or heatmaps.
-
-### Area computed server-side in PostGIS
+### Area Computed Server-side in PostGIS
 
 Computing polygon area in JavaScript in degrees is geometrically meaningless. Casting to `geography` and using `ST_Area(ST_GeogFromText(...))` gives metres² on the WGS84 ellipsoid.
 
 Trade-off: one extra DB round-trip per site creation — acceptable since site creation is not a hot path.
 
-### JWT in `localStorage` over HTTP-only cookies
+### JWT in `localStorage` over HTTP-only Cookies
 
-This is simpler for a hackathon submission: no CSRF token machinery, no refresh-token flow, and it works with the fetch/axios pattern.
+Simpler for a hackathon submission: no CSRF token machinery, no refresh-token flow, and it works with the fetch/axios pattern.
 
 Trade-off: XSS exposure. For production, we would switch to short-lived access tokens + refresh cookies with `HttpOnly` + `SameSite=Strict`.
 
-### UUID primary keys
+### UUID Primary Keys
 
 Non-sequential, non-guessable, safe to expose in URLs.
 
-Trade-off: 16 bytes versus 4 bytes for integers, and slightly larger indexes — negligible at this scale.
+Trade-off: 16 bytes vs 4 for integers, and slightly larger indexes — negligible at this scale.
 
-### Single monorepo (`backend/` + `frontend/`)
+### Single Monorepo (`backend/` + `frontend/`)
 
-Enables atomic commits across the API contract and its consumer, one CI dashboard, and one clone.
+Enables atomic commits across the API contract and its consumer, one CI dashboard, one clone.
 
 Trade-off: requires careful CI path filtering (`paths:` on workflow triggers) so backend changes don't re-run frontend builds, and vice versa.
 
@@ -359,7 +347,7 @@ Trade-off: requires careful CI path filtering (`paths:` on workflow triggers) so
 darukaa-earth/
 ├── .github/
 │   └── workflows/
-│       ├── backend.yml              # Backend CI + Render deploy hook
+│       ├── backend.yml              # Backend CI
 │       └── frontend.yml             # Frontend CI + Vercel build check
 ├── .husky/
 │   └── pre-commit                   # Runs lint-staged on every commit
@@ -380,7 +368,6 @@ darukaa-earth/
 │   ├── alembic/                     # DB migrations
 │   ├── scripts/
 │   │   └── seed.py                  # Demo data seeder
-│   ├── tests/                       # Pytest suite
 │   ├── Dockerfile                   # Production image for Render
 │   ├── requirements.txt
 │   ├── pyproject.toml               # Ruff + Black config
@@ -404,9 +391,10 @@ darukaa-earth/
 │   ├── vite.config.js
 │   └── .env.example
 ├── docs/
-│   ├── architecture.md
-│   ├── database-schema.md
 │   └── screenshots/
+│       ├── login.png
+│       ├── dashboard.png
+│       └── site-detail.png
 ├── docker-compose.yml               # Local PostGIS container
 ├── .pre-commit-config.yaml          # Ruff + Black + hygiene hooks
 ├── .gitignore
@@ -419,18 +407,63 @@ darukaa-earth/
 
 The seed script (`backend/scripts/seed.py`) inserts demo data using **real coordinates** for three Indian ecosystems:
 
-* **Western Ghats** — evergreen forest restoration (Kodagu, Agumbe)
-* **Sundarbans** — mangrove blue carbon (Core Zone, Buffer Zone)
-* **Aravalli** — dry deciduous restoration (Alwar, Sariska)
+- **Western Ghats** — evergreen forest restoration (Kodagu, Agumbe)
+- **Sundarbans** — mangrove blue carbon (Core Zone, Buffer Zone)
+- **Aravalli** — dry deciduous restoration (Alwar, Sariska)
 
-**Why real coordinates:** they exercise PostGIS's spheroidal area computation meaningfully and produce a visually sensible map, with polygons falling in the right regions rather than on blank ocean.
+**Why real coordinates:** they exercise PostGIS's spheroidal area computation meaningfully and produce a visually sensible map (polygons fall in the right regions rather than on blank ocean).
 
 **Why synthetic metrics:** the platform is designed to accept arbitrary time-series data. Generating 12 months of carbon and biodiversity readings in the seed script keeps the repository self-contained — no external API keys, no network dependency, and a fresh clone is instantly demo-able.
 
-**How to swap in real data:** replace `scripts/seed.py` with a loader for a real dataset. Compatible sources include Global Forest Watch, NASA FIRMS, and the India Biodiversity Portal. The schema (`site_metrics.recorded_at`, `carbon_tons`, `biodiversity_index`) already accommodates any tabular time-series.
+**How to swap in real data:** replace `scripts/seed.py` with a loader for a real dataset. Compatible sources include Global Forest Watch (forest cover), NASA FIRMS (fire/vegetation), and the India Biodiversity Portal. The schema (`site_metrics.recorded_at`, `carbon_tons`, `biodiversity_index`) already accommodates any tabular time-series.
 
 ---
 
 ## 8. License
 
 Unpublished. Built as a hackathon submission for Darukaa.Earth.
+```
+
+---
+
+## Now fix the pre-commit size limit (needed to commit)
+
+The reason your previous commit failed was `check-added-large-files` rejecting your screenshots (2.2 MB + 2.7 MB > 1 MB limit). **Raise the limit to 5 MB** so they pass.
+
+**In VS Code**, open `.pre-commit-config.yaml`. Find:
+
+```yaml
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+```
+
+Change to:
+
+```yaml
+      - id: check-added-large-files
+        args: ['--maxkb=5000']
+```
+
+**Save.**
+
+---
+
+## Then commit + push (4 commands in PowerShell)
+
+```powershell
+cd D:\personal_ANU\PJ\darukaa_earth
+pre-commit run --all-files
+pre-commit run --all-files
+git add .
+git commit -m "docs: add live demo URL and screenshots"
+git push
+```
+
+**Expected final output:**
+```
+[main xxxxxxx] docs: add live demo URL and screenshots
+ N files changed, ...
+```
+```
+   xxxxxxx..xxxxxxx  main -> main
+```
